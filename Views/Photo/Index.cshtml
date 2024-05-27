@@ -4,6 +4,7 @@
     <h2>Le nostre foto</h2>
     <a asp-action="Create" class="btn btn-primary mb-3">Aggiungi Nuova Foto</a>
     <div class="menu-items">
+        <input type="text" id="Filter" placeholder="Filtra per titolo" />
         @if (Model == null || !Model.Any())
         {
             <p>Non sono presenti foto</p>
@@ -24,13 +25,14 @@
                 <tbody>
                     @foreach (var photo in Model)
                     {
-                        <tr>
+                        <tr class="MyPhoto">
+                            <td class="filter-text d-none">@photo.Title</td>
                             <td>@photo.Title</td>
                             <td>@photo.Description</td>
                             <td><img src="@photo.ImgSrc" alt="@photo.Title" style="max-width: 50px;" /></td>
                             <td>
                                 @{
-                                    foreach(var category in photo.Categories)
+                                    foreach (var category in photo.Categories)
                                     {
                                         <span>@category.Name</span> <br />
                                     }
@@ -74,4 +76,17 @@
         </div>
     </div>
 </div>
+
+<script>document.getElementById('Filter').addEventListener('keyup', function () {
+        var filter = this.value.toLowerCase();
+        var posts = document.querySelectorAll('.MyPhoto');
+        posts.forEach(function (post) {
+            var title = post.querySelector('.filter-text').innerText.toLowerCase();
+            if (title.includes(filter)) {
+                post.classList.remove('d-none');
+            } else {
+                post.classList.add('d-none');
+            }
+        });
+    });</script>
 
