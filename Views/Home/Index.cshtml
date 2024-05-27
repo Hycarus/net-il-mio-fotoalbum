@@ -1,9 +1,129 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+    Layout = null;
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<head>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/net-il-mio-fotoalbum.styles.css" asp-append-version="true" />
+</head>
+<body>
+    @Html.Partial("_LayoutHeader")
+    <main>
+        <section class="hero-section">
+            <div class="hero-content">
+                <h1>Il mio Fotoalbum</h1>
+                <a asp-controller="Photo" asp-action="Index" class="btn">Visualizza le nostre foto</a>
+            </div>
+        </section>
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div class="d-flex justify-content-center align-items-center">
+                        <h1>Lista foto</h1>
+                        <input class="js_search ms-5" placeholder="Cerca per titolo" />
+                    </div>
+                </div>
+            </div>
+            <div class="row js_no_photo d-none">
+                <div class="col">
+                    <h3>Non ci sono foto</h3>
+                </div>
+            </div>
+            <div class="row js_photo_table d-none">
+            </div>
+        </div>
+        <div class="container">
+            <form asp-controller="" id="contactForm">
+                <div class="mb-3">
+                    <label for="email" class="form-label">Indirizzo E-Mail</label>
+                    <input type="email" name="email" class="form-control" id="email" aria-describedby="emailHelp">
+                </div>
+                <div class="mb-3">
+                    <label for="message" class="form-label">Messaggio</label>
+                    <textarea id="message" name="message" class="form-control"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Invia</button>
+            </form>
+        </div>
 
+    </main>
+
+    @Html.Partial("_LayoutFooter")
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script>function loadList(nameFilter) {
+            axios.get('api/ApiPhoto/GetAllPhotos',
+                {
+                    params:
+                    {
+                        name: nameFilter
+                    }
+                }).then((res) => {
+                    if (res.data.length == 0) {
+                        document.querySelector('.js_no_photo').classList.remove('d-none');
+                        document.querySelector('.js_photo_table').classList.add('d-none');
+                    }
+                    else {
+                        document.querySelector('.js_no_photo').classList.add('d-none');
+                        var photoTable = document.querySelector('.js_photo_table');
+                        photoTable.classList.remove('d-none');
+
+                        photoTable.innerHTML = '';
+                        res.data.forEach((photo) => {
+                            photoTable.innerHTML += `
+                                                <div class="col-4">
+                                                    <div>
+                                                        <img class="w-100" src="${photo.imgSrc}" />
+                                                    <div/>
+                                                    <div class="card">
+                                                        <div class="card-body">
+                                                            <h5 class="card-title">${photo.title}</h5>
+                                                            <p class="card-text">${photo.description}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>`;
+                        });
+                    }
+                });
+        }
+
+
+        loadList('');
+
+        function search() {
+
+            console.log(this.value);
+            loadList(this.value);
+        }
+
+        document.querySelector('.js_search').addEventListener('keyup', search)
+
+        function sendMessage() {
+            document.getElementById('contactForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                const email = document.getElementById('email').value;
+                const message = document.getElementById('message').value;
+
+                try {
+                    const response = axios.post('api/ApiPhoto/CreateContactMessage', {
+                        email: email,
+                        message: message
+                    });
+
+                } catch (error) {
+                    console.log(error);
+                    alert('Invio fallito')
+                }
+            });
+        }
+
+        sendMessage();
+        </script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+</body>

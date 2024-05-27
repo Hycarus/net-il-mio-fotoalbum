@@ -1,0 +1,32 @@
+﻿@model Photo
+@{
+    ViewData["Title"] = "Dettagli della Foto";
+}
+
+<h1>Dettagli della Foto</h1>
+<div class="photo-details">
+    <h2>@Model.Title</h2>
+    @if (Model.ImgSrc != null)
+    {
+        <div class="image">
+            <img src="@Model.ImgSrc" />
+        </div>
+    }
+    <p>@Model.Description</p>
+    <div class="row">
+        <div class="col">
+            Categorie:
+            <div style="display: flex; flex-wrap: wrap; gap: 5px;">
+                @foreach (var category in Model.Categories)
+                {
+                    <div style="background-color: #AAAAAA; display: flex; justify-content: center; align-items: center;
+                            border-radius: 3px; border-style: solid; border-color: #AAAAAA; padding: 2px;">
+                        @category.Name
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <a asp-controller="Photo" asp-action="Index" class="btn btn-primary">Torna alla lista delle foto</a>
+</div>
+

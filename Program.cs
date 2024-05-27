@@ -1,13 +1,24 @@
-﻿namespace net_il_mio_fotoalbum;
+using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Identity;
+using net_il_mio_fotoalbum.Data;
+using Microsoft.EntityFrameworkCore;
+
+namespace net_il_mio_fotoalbum;
 
 public class Program
 {
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            .AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<PhotoContext>();
 
         // Add services to the container.
         builder.Services.AddControllersWithViews();
+        builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+        builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
+        builder.Services.AddDbContext<PhotoContext>();
 
         var app = builder.Build();
 
@@ -24,12 +35,14 @@ public class Program
 
         app.UseRouting();
 
+        app.UseAuthentication();
+
         app.UseAuthorization();
 
         app.MapControllerRoute(
             name: "default",
             pattern: "{controller=Home}/{action=Index}/{id?}");
-
+        app.MapRazorPages();
         app.Run();
     }
 }

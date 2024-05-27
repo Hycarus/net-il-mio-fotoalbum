@@ -1,0 +1,77 @@
+﻿@model List<Photo>
+
+<section class="menu-section">
+    <h2>Le nostre foto</h2>
+    <a asp-action="Create" class="btn btn-primary mb-3">Aggiungi Nuova Foto</a>
+    <div class="menu-items">
+        @if (Model == null || !Model.Any())
+        {
+            <p>Non sono presenti foto</p>
+        }
+        else
+        {
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Titolo</th>
+                        <th>Descrizione</th>
+                        <th>Immagine</th>
+                        <th>Categorie</th>
+                        <th>Visibilità</th>
+                        <th>Azioni</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var photo in Model)
+                    {
+                        <tr>
+                            <td>@photo.Title</td>
+                            <td>@photo.Description</td>
+                            <td><img src="@photo.ImgSrc" alt="@photo.Title" style="max-width: 50px;" /></td>
+                            <td>
+                                @{
+                                    foreach(var category in photo.Categories)
+                                    {
+                                        <span>@category.Name</span> <br />
+                                    }
+                                }
+                            </td>
+                            <td>@photo.IsVisible</td>
+                            <td>
+                                <a asp-action="Details" asp-route-id="@photo.Id" class="btn btn-info">Dettagli</a>
+                                <a asp-action="Edit" asp-route-id="@photo.Id" class="btn btn-warning">Modifica</a>
+                                <button data-action-url="@Url.Action("Delete", "Photo", new { id = photo.Id })" class="btn btn-danger" type="button" data-id="@photo.Id" data-name="@photo.Title" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                    Cancella
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</section>
+
+<div id="deleteModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5"></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <form id="itemForm" action="" method="post">
+                    <input type="hidden" id="itemId" name="id" value="" />
+                    <div class="form-group mb-3">
+                        <input type="hidden" class="form-control" id="itemName" name="name" />
+                    </div>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+                    <button type="submit" class="btn btn-danger">Cancella definitivamente</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,61 @@
+﻿@model List<Category>
+
+<section class="menu-section">
+    <h2>Categorie</h2>
+    <a asp-action="Create" class="btn btn-primary mb-3">Aggiungi Nuova Categoria</a>
+    <div class="menu-items">
+        @if (Model == null || !Model.Any())
+        {
+            <p>Non sono presenti categorie</p>
+        }
+        else
+        {
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Azioni</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var category in Model)
+                    {
+                        <tr>
+                            <td>@category.Name</td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@category.Id" class="btn btn-warning">Modifica</a>
+                                <button data-action-url="@Url.Action("Delete", "Category", new { id = category.Id })" class="btn btn-danger" type="button" data-id="@category.Id" data-name="@category.Name" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                    Cancella
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</section>
+
+<div id="deleteModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5"></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <form id="itemForm" action="" method="post">
+                    <input type="hidden" id="itemId" name="id" value="" />
+                    <div class="form-group mb-3">
+                        <input type="hidden" class="form-control" id="itemName" name="name" />
+                    </div>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+                    <button type="submit" class="btn btn-danger">Cancella definitivamente</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+

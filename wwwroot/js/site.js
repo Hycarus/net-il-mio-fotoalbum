@@ -1,5 +1,19 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿document.addEventListener('DOMContentLoaded', function () {
+    var itemModal = document.getElementById('deleteModal');
+    var itemForm = document.getElementById('itemForm');
+    var modalTitle = document.querySelector('.modal-title');
+    var itemIdInput = document.getElementById('itemId');
+    var itemNameInput = document.getElementById('itemName');
 
-// Write your JavaScript code.
+    itemModal.addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget;
+        var id = button.getAttribute('data-id');
+        var name = button.getAttribute('data-name');
+        var actionUrl = button.getAttribute('data-action-url');
 
+        modalTitle.textContent = 'Sei sicuro di voler cancellare ' + name + '?';
+        itemIdInput.value = id;
+        itemNameInput.value = name;
+        itemForm.action = actionUrl;
+    });
+});

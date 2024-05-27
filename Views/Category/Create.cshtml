@@ -1,0 +1,19 @@
+﻿@model CategoryFormModel
+
+<h1>Aggiungi Nuova Categoria</h1>
+
+<div class="category-create-form">
+    <form asp-controller="Category" asp-action="Create" method="post">
+        @Html.AntiForgeryToken()
+        <div class="form-group">
+            <label asp-for="Category.Name" class="control-label">Nome</label>
+            <input asp-for="Category.Name" class="form-control" />
+            <span asp-validation-for="Category.Name" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Crea" class="btn btn-primary" />
+            <a asp-action="Index" class="btn btn-secondary">Annulla</a>
+        </div>
+    </form>
+</div>
+
