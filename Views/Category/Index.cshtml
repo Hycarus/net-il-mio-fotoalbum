@@ -1,8 +1,10 @@
 ﻿@model List<Category>
 
 <section class="menu-section">
-    <h2>Categorie</h2>
-    <a asp-action="Create" class="btn btn-primary mb-3">Aggiungi Nuova Categoria</a>
+    <div class="text-center m-3">
+        <h2>Categorie</h2>
+        <a asp-action="Create" class="btn btn-primary mb-3">Aggiungi Nuova Categoria</a>
+    </div>
     <div class="menu-items">
         @if (Model == null || !Model.Any())
         {

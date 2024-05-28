@@ -1,8 +1,10 @@
 ﻿@model List<Photo>
 
 <section class="menu-section">
-    <h2>Le nostre foto</h2>
-    <a asp-action="Create" class="btn btn-primary mb-3">Aggiungi Nuova Foto</a>
+    <div class="text-center">
+        <h2 class="text-center m-3">Le nostre foto</h2>
+        <a asp-action="Create" class="btn btn-primary mb-3">Aggiungi Nuova Foto</a>
+    </div>
     <div class="menu-items">
         <input type="text" id="Filter" placeholder="Filtra per titolo" />
         @if (Model == null || !Model.Any())
@@ -15,20 +17,31 @@
                 <thead>
                     <tr>
                         <th>Titolo</th>
+                        @{
+                            if (User.IsInRole("ADMIN, USER"))
+                            {
+                                <th>Autore</th>
+                            }
+                        }
                         <th>Descrizione</th>
                         <th>Immagine</th>
                         <th>Categorie</th>
-                        <th>Visibilità</th>
                         <th>Azioni</th>
+                        <th>Visibilità</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var photo in Model)
-                    {
+                        {
                         <tr class="MyPhoto">
                             <td class="filter-text d-none">@photo.Title</td>
                             <td>@photo.Title</td>
-                            <td>@photo.Description</td>
+                            @{ if (User.IsInRole("ADMIN, USER"))
+                                    {
+                                        <td>@photo?.Owner?.Id</td>
+                                    }
+                                }
+                            <td>@photo?.Description</td>
                             <td><img src="@photo.ImgSrc" alt="@photo.Title" style="max-width: 50px;" /></td>
                             <td>
                                 @{
@@ -38,13 +51,43 @@
                                     }
                                 }
                             </td>
-                            <td>@photo.IsVisible</td>
                             <td>
                                 <a asp-action="Details" asp-route-id="@photo.Id" class="btn btn-info">Dettagli</a>
-                                <a asp-action="Edit" asp-route-id="@photo.Id" class="btn btn-warning">Modifica</a>
-                                <button data-action-url="@Url.Action("Delete", "Photo", new { id = photo.Id })" class="btn btn-danger" type="button" data-id="@photo.Id" data-name="@photo.Title" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                                    Cancella
-                                </button>
+                                @{
+                                    if (!User.IsInRole("ADMIN"))
+                                    {
+                                        <a asp-action="Edit" asp-route-id="@photo.Id" class="btn btn-warning">Modifica</a>
+                                        <button data-action-url="@Url.Action("Delete", "Photo", new { id = photo.Id })" class="btn btn-danger" type="button" data-id="@photo.Id" data-name="@photo.Title" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                            Cancella
+                                        </button>
+                                    }
+                                }
+                            </td>
+                            <td>
+                                @{
+                                    if (User.IsInRole("ADMIN"))
+                                    {
+                                        <form asp-controller="Photo" asp-action="Visibility" asp-route-id="@photo.Id" method="post" class="d-flex align-items-center">
+                                            <div>
+                                                <div class="form-group">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="radio" asp-for="@photo.IsVisible" value="true"/>
+                                                        <label class="form-check-label" for="IsVisible">Si</label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="radio" asp-for="@photo.IsVisible" value="false" />
+                                                        <label class="form-check-label" for="IsVisible">No</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <button class="btn btn-success ms-2" type="submit">&#10003;</button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        @photo.IsVisible
+                                    }
+                                }
                             </td>
                         </tr>
                     }

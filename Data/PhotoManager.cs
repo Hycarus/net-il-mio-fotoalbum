@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using net_il_mio_fotoalbum.Models;
 
@@ -6,11 +7,17 @@ namespace net_il_mio_fotoalbum.Data
 {
 	public class PhotoManager
 	{
-		public static List<Photo> GetAllPhotos()
+		public static List<Photo> GetAllPhotographerPhotos(string id)
 		{
 			using PhotoContext db = new PhotoContext();
-			return db.Photos.Include(p => p.Categories).ToList();
+			return db.Photos.Where(x => x.OwnerId == id).Include(p => p.Categories).ToList();
 		}
+
+        public static List<Photo> GetAllPhotos()
+        {
+            using PhotoContext db = new PhotoContext();
+            return db.Photos.Include(p => p.Categories).ToList();
+        }
 
         public static List<Photo> GetAllVisiblePhotos()
         {
@@ -50,6 +57,26 @@ namespace net_il_mio_fotoalbum.Data
 			db.SaveChanges();
         }
 
+        public static bool UpdateVisibility(int id, bool visible)
+        {
+            try
+            {
+                using PhotoContext db = new PhotoContext();
+                var photoToEdit = db.Photos.Where(x => x.Id == id).FirstOrDefault();
+                if(photoToEdit == null)
+                {
+                    return false;
+                }
+                photoToEdit.IsVisible = visible;
+                db.SaveChanges();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
         public static bool UpdatePhoto(int id, Photo photo, List<string> selectedCategories)
         {
             try
@@ -61,7 +88,8 @@ namespace net_il_mio_fotoalbum.Data
                 photoToEdit.Title = photo.Title;
                 photoToEdit.Description = photo.Description;
                 photoToEdit.IsVisible = photo.IsVisible;
-                photoToEdit.Image = photo.Image;
+                if(photo.Image != null)
+                    photoToEdit.Image = photo.Image;
                 photoToEdit.Categories.Clear();
                 if (selectedCategories != null)
                 {

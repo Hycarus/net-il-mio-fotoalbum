@@ -1,23 +1,30 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Hosting;
 using net_il_mio_fotoalbum.Data;
 using net_il_mio_fotoalbum.Models;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace net_il_mio_fotoalbum.Controllers
 {
     public class PhotoController : Controller
     {
 
-        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "PHOTOGRAPHER, ADMIN")]
         public IActionResult Index()
         {
-            return View(PhotoManager.GetAllPhotos());
+            if (User.IsInRole("ADMIN"))
+            {
+                return View(PhotoManager.GetAllPhotos());
+            }
+            var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return View(PhotoManager.GetAllPhotographerPhotos(id));
         }
 
-        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "PHOTOGRAPHER, ADMIN")]
         public IActionResult Details(int id)
         {
             var photo = PhotoManager.GetPhoto(id, true);
@@ -27,7 +34,7 @@ namespace net_il_mio_fotoalbum.Controllers
                 return View("errore");
         }
 
-        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "PHOTOGRAPHER, ADMIN")]
         [HttpGet]
         public IActionResult Create()
         {
@@ -37,11 +44,12 @@ namespace net_il_mio_fotoalbum.Controllers
             return View(model);
         }
 
-        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "PHOTOGRAPHER, ADMIN")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(PhotoFormModel data)
         {
+            data.Photo.OwnerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (!ModelState.IsValid)
             {
                 data.CreateCategories();
@@ -52,7 +60,7 @@ namespace net_il_mio_fotoalbum.Controllers
             return RedirectToAction("Index");
         }
 
-        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "PHOTOGRAPHER, ADMIN")]
         [HttpGet]
         public IActionResult Edit(int id)
         {
@@ -71,7 +79,7 @@ namespace net_il_mio_fotoalbum.Controllers
             }
         }
 
-        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "PHOTOGRAPHER, ADMIN")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, PhotoFormModel data)
@@ -91,7 +99,24 @@ namespace net_il_mio_fotoalbum.Controllers
                 return NotFound();
         }
 
-        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "PHOTOGRAPHER, ADMIN")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Visibility(int id, PhotoFormModel data)
+        {
+            
+            if (data.Photo.IsVisible)
+                data.Photo.IsVisible = true;
+            else
+                data.Photo.IsVisible = false;
+            var photoToEdit = PhotoManager.UpdateVisibility(id, data.Photo.IsVisible);
+            if (photoToEdit)
+                return RedirectToAction("Index");
+            else
+                return NotFound();
+        }
+
+        [Authorize(Roles = "PHOTOGRAPHER, ADMIN")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)

@@ -1,8 +1,7 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model PhotoFormModel
+@{
     Layout = null;
 }
-
 <head>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -13,15 +12,13 @@
     <main>
         <section class="hero-section">
             <div class="hero-content">
-                <h1>Il mio Fotoalbum</h1>
-                <a asp-controller="Photo" asp-action="Index" class="btn">Visualizza le nostre foto</a>
+                <h1 class="text-center m-2">Visualizza le nostre foto</h1>
             </div>
         </section>
         <div class="container">
             <div class="row">
                 <div class="col">
                     <div class="d-flex justify-content-center align-items-center">
-                        <h1>Lista foto</h1>
                         <input class="js_search ms-5" placeholder="Cerca per titolo" />
                     </div>
                 </div>
@@ -34,7 +31,8 @@
             <div class="row js_photo_table d-none">
             </div>
         </div>
-        <div class="container">
+        <div class="container mt-5 w-25">
+            <h2 class="text-center">Contattaci!</h2>
             <form asp-controller="" id="contactForm">
                 <div class="mb-3">
                     <label for="email" class="form-label">Indirizzo E-Mail</label>
@@ -74,7 +72,7 @@
                         photoTable.innerHTML = '';
                         res.data.forEach((photo) => {
                             photoTable.innerHTML += `
-                                                <div class="col-4">
+                                                <div class="col-4 mt-3">
                                                     <div>
                                                         <img class="w-100" src="${photo.imgSrc}" />
                                                     <div/>
@@ -82,6 +80,7 @@
                                                         <div class="card-body">
                                                             <h5 class="card-title">${photo.title}</h5>
                                                             <p class="card-text">${photo.description}</p>
+                                                            @*<a href="@Url.Action("Index", "Photo", new { id = Model.Photo.OwnerId })">${(photo.ownerId == null ? "" : photo.ownerId)}</a>*@
                                                         </div>
                                                     </div>
                                                 </div>`;
@@ -122,7 +121,7 @@
         }
 
         sendMessage();
-        </script>
+    </script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

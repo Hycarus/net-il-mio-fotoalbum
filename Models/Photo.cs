@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
 
 namespace net_il_mio_fotoalbum.Models
 {
@@ -14,6 +15,9 @@ namespace net_il_mio_fotoalbum.Models
 		public byte[]? Image { get; set; }
         public string ImgSrc => Image != null ? $"data:image/png;base64,{Convert.ToBase64String(Image)}" : "";
         public bool IsVisible { get; set; }
+
+		public string? OwnerId { get; set; }
+		public IdentityUser? Owner { get; set; }
 
 		public List<Category>? Categories { get; set; }
 		public Photo()

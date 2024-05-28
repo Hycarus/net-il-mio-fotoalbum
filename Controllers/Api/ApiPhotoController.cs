@@ -20,7 +20,9 @@ namespace net_il_mio_fotoalbum.Controllers.Api
         [HttpGet]
         public IActionResult GetAllPhotos(string? name)
         {
-            if (name == null)
+            if (name == null && User.IsInRole("ADMIN"))
+                return Ok(PhotoManager.GetAllPhotos());
+            else if(name == null)
                 return Ok(PhotoManager.GetAllVisiblePhotos());
             return Ok(PhotoManager.GetPhotosByTitle(name));
         }
