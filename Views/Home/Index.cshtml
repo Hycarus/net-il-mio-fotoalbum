@@ -80,7 +80,7 @@
                                                         <div class="card-body">
                                                             <h5 class="card-title">${photo.title}</h5>
                                                             <p class="card-text">${photo.description}</p>
-                                                            @*<a href="@Url.Action("Index", "Photo", new { id = Model.Photo.OwnerId })">${(photo.ownerId == null ? "" : photo.ownerId)}</a>*@
+                                                            <a href="/Photo/UserIndex/${photo.ownerId}">${(photo.ownerId == null ? "" : photo.ownerId)}</a>
                                                         </div>
                                                     </div>
                                                 </div>`;

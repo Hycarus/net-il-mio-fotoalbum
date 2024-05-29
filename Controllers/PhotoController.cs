@@ -24,6 +24,11 @@ namespace net_il_mio_fotoalbum.Controllers
             return View(PhotoManager.GetAllPhotographerPhotos(id));
         }
 
+        public IActionResult UserIndex(string id)
+        {
+            return View(PhotoManager.GetAllPhotographerPhotos(id));
+        }
+
         [Authorize(Roles = "PHOTOGRAPHER, ADMIN")]
         public IActionResult Details(int id)
         {

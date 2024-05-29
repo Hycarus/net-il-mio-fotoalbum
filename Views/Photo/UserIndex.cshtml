@@ -1,0 +1,72 @@
+﻿@model List<Photo>
+
+<section class="menu-section">
+    <div class="text-center">
+        <h2 class="text-center m-3">Le nostre foto</h2>
+        <a asp-action="Create" class="btn btn-primary mb-3">Aggiungi Nuova Foto</a>
+    </div>
+    <div class="menu-items">
+        <input type="text" id="Filter" placeholder="Filtra per titolo" />
+        @if (Model == null || !Model.Any())
+        {
+            <p>Non sono presenti foto</p>
+        }
+        else
+        {
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Titolo</th>
+                        @{
+                            if (User.IsInRole("ADMIN, USER"))
+                            {
+                                <th>Autore</th>
+                            }
+                        }
+                        <th>Descrizione</th>
+                        <th>Immagine</th>
+                        <th>Categorie</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var photo in Model)
+                    {
+                        <tr class="MyPhoto">
+                            <td class="filter-text d-none">@photo.Title</td>
+                            <td>@photo.Title</td>
+                            @{ if (User.IsInRole("ADMIN, USER"))
+                                {
+                                    <td>@photo?.Owner?.Id</td>
+                                }
+                            }
+                            <td>@photo?.Description</td>
+                            <td><img src="@photo.ImgSrc" alt="@photo.Title" style="max-width: 50px;" /></td>
+                            <td>
+                                @{
+                                    foreach (var category in photo.Categories)
+                                    {
+                                        <span>@category.Name</span> <br />
+                                    }
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</section>
+
+<script>document.getElementById('Filter').addEventListener('keyup', function () {
+        var filter = this.value.toLowerCase();
+        var posts = document.querySelectorAll('.MyPhoto');
+        posts.forEach(function (post) {
+            var title = post.querySelector('.filter-text').innerText.toLowerCase();
+            if (title.includes(filter)) {
+                post.classList.remove('d-none');
+            } else {
+                post.classList.add('d-none');
+            }
+        });
+    });</script>
+
