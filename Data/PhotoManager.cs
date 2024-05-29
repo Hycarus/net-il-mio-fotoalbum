@@ -16,13 +16,13 @@ namespace net_il_mio_fotoalbum.Data
         public static List<Photo> GetAllPhotos()
         {
             using PhotoContext db = new PhotoContext();
-            return db.Photos.Include(p => p.Categories).ToList();
+            return db.Photos.Include(p => p.Categories).Include(p => p.Owner).ToList();
         }
 
         public static List<Photo> GetAllVisiblePhotos()
         {
             using PhotoContext db = new PhotoContext();
-            return db.Photos.Where(p => p.IsVisible).Include(p => p.Categories).ToList();
+            return db.Photos.Where(p => p.IsVisible).Include(p => p.Categories).Include(p => p.Owner).ToList();
         }
 
         public static Photo GetPhoto(int id, bool includeReferences = true)

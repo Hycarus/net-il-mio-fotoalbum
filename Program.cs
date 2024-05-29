@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
 using net_il_mio_fotoalbum.Data;
 using Microsoft.EntityFrameworkCore;
+using net_il_mio_fotoalbum.Hubs;
 
 namespace net_il_mio_fotoalbum;
 
@@ -18,6 +19,7 @@ public class Program
         builder.Services.AddControllersWithViews();
         builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
         builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
+        builder.Services.AddSignalR();
         builder.Services.AddDbContext<PhotoContext>();
 
         var app = builder.Build();
@@ -43,6 +45,7 @@ public class Program
             name: "default",
             pattern: "{controller=Home}/{action=Index}/{id?}");
         app.MapRazorPages();
+        app.MapHub<ChatHub>("/chatHub");
         app.Run();
     }
 }

@@ -24,11 +24,13 @@
     <None Remove="Controllers\Api\" />
     <None Remove="Views\Photo\" />
     <None Remove="Views\Category\" />
+    <None Remove="Hubs\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\" />
     <Folder Include="Controllers\Api\" />
     <Folder Include="Views\Photo\" />
     <Folder Include="Views\Category\" />
+    <Folder Include="Hubs\" />
   </ItemGroup>
 </Project>
